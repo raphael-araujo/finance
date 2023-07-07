@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block 'title' %}Gerenciar | FINAN.CE{% endblock  %}
+
+{% block 'body' %}
+    <br>
+    <br>
+    <div class="container">
+        <div class="row">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }}" align="center">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            <div class="col-md-5">
+                <p class="fonte-destaque">Suas contas</p>
+                <hr>
+                <div class="contas">
+                    {% for conta in contas %}
+                        <div class="lista-contas-main">
+                            <span><img width="10%" src="{{ conta.icone.url }}">&nbsp&nbsp{{ conta }}</span>
+                            <span class="total-conta positivo ">R$ {{ conta.valor }}&nbsp&nbsp&nbsp <a href="{% url 'deletar_banco' conta.id %}"><img src="{% static 'perfil/img/exit.png' %}"></a></span>
+                        </div>
+                        <br>
+                    {% endfor %}
+                </div>
+                <hr>
+                <span class="fonte-destaque">Total:</span>
+                <span class="positivo total-conta font-destaque">R$ {{ valor_total }}</span>
+            </div>
+
+            <div class="col-md-2"></div>
+
+            <div class="col-md-5">
+                <p class="fonte-destaque">Nova conta</p>
+                    <form action="{% url 'gerenciar_contas' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            {{ conta_form|crispy }}
+                        <input style="width: 100%" type="submit" class="botao-principal">
+                    </form>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-5">
+                <span class="fonte-destaque">Nova categoria</span>
+                <form action="{% url 'cadastrar_categoria' %}" method="POST"> {% csrf_token %}
+                    {{ categoria_form|crispy }}
+                    <input style="width: 100%" type="submit" class="botao-principal" value="Adicionar">
+                </form>
+            </div>
+
+            <div class="col-md-2">
+            </div>
+
+            <div class="col-md-5">
+                <span class="fonte-destaque">Suas categorias</span>
+                <br>
+                <div class="contas">
+                    {% for categoria in categorias %}
+                        <div class="lista-contas-main">
+                            <span>{{ categoria }}</span>
+                            <span class="total-conta"><a href="{% url 'atualizar_categoria' categoria.id %}"><img
+                                        src="{% if categoria.essencial %}{% static 'perfil/img/check.png' %}{% else %}{% static 'perfil/img/exit.png' %}{% endif %}"></a></span>
+                        </div>
+                        <br>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
