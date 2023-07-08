@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block 'title' %}Novo extrato | FINAN.CE{% endblock  %}
+
+{% block 'body' %}
+    <div class="container">
+        <br>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {{ message.tags }}" align="center">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <br>
+        <span class="fonte-destaque">Adicionar entradas/saídas</span>
+        <div class="row">
+
+            <div class="col-md-7">
+                <form action="{% url 'novo_extrato' %}" method="POST">{% csrf_token %}
+                    <div class="row">
+                        <div class="col-md">
+                            <label>Valor</label>
+                            <input name="valor" type="number" step="0.01" class="form-control" placeholder="R$" required>
+                        </div>
+
+                        <div class="col-md">
+                            <label>Categoria</label>
+                            <select name="categoria" class="form-select">
+                                {% for categoria in categorias %}
+                                    <option value="{{ categoria.id }}">{{categoria}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <label>Descrição</label>
+                    <textarea name="descricao" class="form-control" required></textarea>
+                    <br>
+                    <div class="row">
+                        <div class="col-md">
+                            <label>Data</label>  
+                            <input name="data" type="date" class="form-control" required>
+                        </div>
+
+                        <div class="col-md">
+                            <label>Conta</label>
+                            <select name="conta" class="form-select">
+                                {% for conta in contas %}
+                                    <option value="{{ conta.id }}">{{conta}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <input type="radio" name="tipo" value="E"> <label class="positivo">Entrada</label>
+                    &nbsp;&nbsp;
+                    <input type="radio" name="tipo" value="S"> <label class="negativo">Saída</label>
+                    <br>
+                    <br>
+                    <input type="submit" style="width:40%;" class="botao-principal">
+                </form>
+            </div>
+            <div class="col-md-8">
+            </div>
+        </div>
+    </div>
+{% endblock %}
