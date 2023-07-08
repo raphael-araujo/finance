@@ -14,7 +14,7 @@ from .utils import calcula_total
 def home(request: HttpRequest) -> HttpResponse:
     contas = Conta.objects.all()
     saldo_total = calcula_total(contas, "valor")
-    print(saldo_total)
+
     context = {
         "contas": contas,
         "saldo_total": saldo_total,
