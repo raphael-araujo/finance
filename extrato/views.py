@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 
 from django.contrib import messages
@@ -58,3 +59,34 @@ def novo_extrato(request: HttpRequest) -> HttpResponse:
             'contas': contas,
         }
         return render(request, 'novo_extrato.html', context)
+
+
+def ver_extratos(request: HttpRequest) -> HttpResponse:
+    contas = Conta.objects.all()
+    categorias = Categoria.objects.all()
+    extratos = Extrato.objects.filter(data__month=datetime.now().month)
+
+    filtro_conta = request.GET.get('conta')
+    filtro_categoria = request.GET.get('categoria')
+
+    if filtro_conta:
+        extratos = Extrato.objects.filter(conta__id=filtro_conta)
+        filtro_conta = int(filtro_conta)
+
+    if filtro_categoria:
+        extratos = Extrato.objects.filter(categoria__id=filtro_categoria)
+        filtro_categoria = int(filtro_categoria)
+
+    if filtro_conta and filtro_categoria:
+        extratos = Extrato.objects.filter(conta__id=filtro_conta, categoria__id=filtro_categoria)
+        filtro_conta = int(filtro_conta)
+        filtro_categoria = int(filtro_categoria)
+
+    context = {
+        'contas': contas,
+        'categorias': categorias,
+        'extratos': extratos,
+        'filtro_conta': filtro_conta,
+        'filtro_categoria': filtro_categoria,
+    }
+    return render(request, 'ver_extratos.html', context)

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block 'title' %}Extratos | FINAN.CE{% endblock  %}
+
+{% block 'body' %}
+    <br>
+    <br>
+    <div class='container'>
+        <form action="{% url 'ver_extratos' %}" method="GET">
+        <div class="row">
+            <div class="col-md">
+                <label>Conta</label>
+                <select name="conta" class="form-select">
+                    <option value="">Todas as contas</option>
+                    {% for conta in contas|dictsort:"apelido" %}
+                        <option value="{{conta.id}}" {% if filtro_conta == conta.id %}selected{% endif %}>
+                            {{conta}}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md">
+                <label>Categoria</label>
+                <select name="categoria" class="form-select">
+                    <option value="">Todas as categorias</option>
+                    {% for categoria in categorias|dictsort:"categoria" %}
+                        <option value="{{categoria.id}}"{% if filtro_categoria == categoria.id %} selected {% endif %}>
+                            {{categoria}}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md">
+                <label>Período</label>
+                <select name="periodo" class="form-select">
+                    <option>Últimos 7 dias</option>
+                </select>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-2">
+                <input style="width: 100%" type="submit" class="botao-principal" value="Filtrar">
+            </div>
+            </form>
+            <div class="col-md-2">
+                <a href="{% url 'ver_extratos' %}" class="botao-secundario">Limpar filtros</a>
+            </div>
+            <div class="col-md-2" align="right">
+                <a href="" class="botao-secundario">Exportar</a>
+            </div>
+        </div>
+        <br>
+        <br>
+
+        <div class="card">
+            {% if extratos %}
+                <table>
+                    <tr>
+                        <th>Conta</th>
+                        <th>Categoria</th>
+                        <th>Data</th>
+                        <th>Tipo</th>
+                        <th>valor</th>
+                        
+                    </tr>
+                    {% for extrato in extratos %}
+                        <tr class="linha">
+                            <td width="10%">{{extrato.conta}}</td>
+                            <td>{{extrato.categoria}}</td>
+                            <td>{{extrato.data}}</td>
+                            <td>
+                            {% if extrato.tipo == 'S'%}
+                                <img src="{% static 'perfil/img/saidas.png' %}">
+                            {% else %}
+                                <img src="{% static 'perfil/img/entradas.png' %}">
+                            {% endif %}
+                            
+                            </td>
+                            <td>R$ {{extrato.valor}}</td>
+                            
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p>Nenhum extrato encontrado.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
