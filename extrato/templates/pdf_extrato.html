@@ -1,0 +1,72 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    </head>
+
+    <style>
+        @page {
+            size: a4 portrait;
+            @frame content_frame {
+                left: 75pt;
+                width: 600pt;
+                top: 50pt;
+                height: 692pt;
+            }
+        }
+
+        table {
+            -pdf-keep-with-next: true;
+        }
+
+        p {
+            margin: 0;
+            -pdf-keep-with-next: true;
+        }
+
+        p.separator {
+            -pdf-keep-with-next: false;
+            font-size: 6pt;
+        }
+    </style>
+
+    {% block 'body' %}
+        <div>
+            <h1>EXTRATO DO MÊS</h1>
+            <br>
+            <table width="600px" cellpadding="5" border="1px" border-style="hidden" >
+                <thead>
+                    <tr>
+                        <th>Conta</th>
+                        <th>Categoria</th>
+                        <th>Data</th>
+                        <th>Tipo</th>
+                        <th>valor</th>
+                    </tr>
+                </thead>
+                {% for extrato in extratos %}
+                    <tbody>
+                        <tr>
+                            <td align="center">{{extrato.conta}}</td>
+                            <td align="center">{{extrato.categoria}}</td>
+                            <td align="center">{{extrato.data}}</td>
+                            <td width="10%" align="center">
+                            {% if extrato.tipo == 'S'%}
+                                Saída
+                            {% else %}
+                                Entrada
+                            {% endif %}
+                            </td>
+                            <td align="center">R$ {{extrato.valor}}</td>
+                        </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
+        </div>
+    {% endblock %}
+
+</html>

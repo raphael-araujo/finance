@@ -4,11 +4,13 @@ from decimal import Decimal
 from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 from perfil.models import Categoria, Conta
 
 from .models import Extrato
-from .utils import extrato_is_valid
+from .utils import extrato_is_valid, link_callback
 
 
 def novo_extrato(request: HttpRequest) -> HttpResponse:
@@ -90,3 +92,31 @@ def ver_extratos(request: HttpRequest) -> HttpResponse:
         'filtro_categoria': filtro_categoria,
     }
     return render(request, 'ver_extratos.html', context)
+
+
+def exportar_pdf(request: HttpRequest) -> HttpResponse:
+    contas = Conta.objects.all()
+    categorias = Categoria.objects.all()
+    extratos = Extrato.objects.filter(data__month=datetime.now().month)
+
+    template_path = 'pdf_extrato.html'
+    context = {
+        'contas': contas,
+        'categorias': categorias,
+        'extratos': extratos,
+    }
+    response = HttpResponse(content='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="Extrato.pdf"'
+    
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(
+        src=html,
+        dest=response,
+        link_callback=link_callback,
+    )
+    if pisa_status.err:
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+
+    return response
