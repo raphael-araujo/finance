@@ -13,7 +13,13 @@ class ContaPagar(models.Model):
     def __str__(self) -> str:
         return self.titulo
 
+    class Meta:
+        verbose_name_plural = 'Contas a pagar'
+
 
 class ContaPaga(models.Model):
     conta = models.ForeignKey(ContaPagar, on_delete=models.DO_NOTHING)
     data_pagamento = models.DateField()
+
+    class Meta:
+        verbose_name_plural = 'Contas pagas'
