@@ -30,3 +30,8 @@ def update_valor_categoria(request: HttpRequest, id: int):
         return redirect('definir_planejamento')
 
     return JsonResponse({'status': 'Sucesso'})
+
+
+def ver_planejamento(request: HttpRequest) -> HttpResponse:
+    categorias = Categoria.objects.all()
+    return render(request, 'ver_planejamento.html', {'categorias': categorias})
