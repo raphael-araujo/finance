@@ -1,8 +1,9 @@
 from django.contrib import messages
-
-# from django.db.models import Sum
+from django.db.models import Sum
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+
+from extrato.models import Extrato
 
 from .forms import CategoriaForm, ContaForm
 from .models import Categoria, Conta
@@ -73,3 +74,19 @@ def atualizar_categoria(request: HttpRequest, id: int) -> HttpResponse:
     categoria.save()
 
     return redirect(to="gerenciar_contas")
+
+
+def dashboard(request: HttpRequest) -> HttpResponse:
+    dados = {}
+    categorias = Categoria.objects.all()
+
+    for categoria in categorias:
+        dados[categoria.categoria] = Extrato.objects.filter(
+            categoria=categoria
+        ).aggregate(Sum("valor"))["valor__sum"]
+
+    context = {
+        "labels": list(dados.keys()),
+        "values": list(dados.values())}
+
+    return render(request, "dashboard.html", context)
