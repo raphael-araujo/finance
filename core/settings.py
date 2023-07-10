@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "perfil",
     "extrato",
     "planejamento",
+    "contas",
     # 3rd apps:
     "crispy_forms",
     "crispy_bootstrap5",
