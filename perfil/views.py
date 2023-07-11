@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib import messages
 from django.db.models import Sum
 from django.http import HttpRequest, HttpResponse
@@ -7,7 +9,7 @@ from extrato.models import Extrato
 
 from .forms import CategoriaForm, ContaForm
 from .models import Categoria, Conta
-from .utils import calcula_total
+from .utils import calcula_equilibrio_financeiro, calcula_total
 
 # Create your views here.
 
@@ -15,12 +17,26 @@ from .utils import calcula_total
 def home(request: HttpRequest) -> HttpResponse:
     contas = Conta.objects.all()
     saldo_total = calcula_total(contas, "valor")
+    extratos = Extrato.objects.filter(data__month=datetime.now().month)
+    entradas = extratos.filter(tipo="E")
+    saidas = extratos.filter(tipo="S")
+
+    total_entradas = calcula_total(entradas, "valor")
+    total_saidas = calcula_total(saidas, "valor")
+    (
+        percentual_gastos_essenciais,
+        percentual_gastos_nao_essenciais,
+    ) = calcula_equilibrio_financeiro()
 
     context = {
         "contas": contas,
-        "saldo_total": saldo_total,
+        "saldo_total": f"{saldo_total:,.2f}",
+        "total_entradas": total_entradas,
+        "total_saidas": total_saidas,
+        "diferenca": total_entradas - total_saidas,
+        "percentual_gastos_essenciais": percentual_gastos_essenciais,
+        "percentual_gastos_nao_essenciais": percentual_gastos_nao_essenciais,
     }
-
     return render(request, "home.html", context)
 
 
