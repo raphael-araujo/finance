@@ -87,6 +87,6 @@ def dashboard(request: HttpRequest) -> HttpResponse:
 
     context = {
         "labels": list(dados.keys()),
-        "values": list(dados.values())}
+        "values": list(float(dado) for dado in dados.values())}
 
     return render(request, "dashboard.html", context)

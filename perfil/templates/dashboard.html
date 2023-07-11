@@ -35,7 +35,7 @@
                 labels: {{labels|safe}},
                 datasets: [{
                     label: 'Gastos por categoria',
-                    data: {{values|floatformat:2}},
+                    data: {{ values|safe }},
                 }]
                 },
             });
